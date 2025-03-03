@@ -5,3 +5,4 @@ transformers
 numpy
 openai
 sentence_transformers
+dotenv
