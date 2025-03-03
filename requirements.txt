@@ -1,0 +1,7 @@
+faiss-cpu
+groq
+streamlit
+transformers
+numpy
+openai
+sentence_transformers
