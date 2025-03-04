@@ -20,9 +20,41 @@ class LLMWrapper:
         # elif model_type == "huggingface":
         #     self.pipeline = pipeline("text-generation", model="gpt2")
 
+    def check_ethics(self, text):
+        log_event(f"Checking ethics for: {text[:100]}...")
+
+        moderation_prompt = (
+            "You are an AI ethics filter. Analyze the following text and determine whether it contains harmful, "
+            "offensive, illegal, or unethical content. Respond with 'SAFE' if it is appropriate, or 'FLAGGED' "
+            "if it violates ethical standards.\n\n"
+            f"Text: {text}\n\nResponse:"
+        )
+
+        response = self.client.chat.completions.create(
+            model=self.model_name,
+            messages=[{"role": "user", "content": moderation_prompt}],
+            temperature=0, 
+            max_completion_tokens=10,
+            top_p=1,
+            stream=False,
+            stop=None
+        )
+
+        reply = response.choices[0].message.content.strip()
+
+        if "FLAGGED" in reply:
+            log_event(f"Ethical violation detected: {text[:100]}...")
+            return False, "This prompt violates ethical guidelines."
+
+        return True, None
+
     @cache_response  # Caching LLM responses
     def generate(self, prompt, vector_store):
         log_event(f"Generating response for prompt: {prompt}")
+
+        is_safe, warning_message = self.check_ethics(prompt)
+        if not is_safe:
+            return warning_message
 
         # Retrieve relevant documents for better context
         retrieved_docs = vector_store.search(prompt, top_k=2)
@@ -30,7 +62,6 @@ class LLMWrapper:
             log_event(f"Retrieved relevant documents: {retrieved_docs}")
             context = "\n".join(retrieved_docs)
             prompt = f"{context}\n\n{prompt}" 
-            print("#########################################",prompt,"#####################################")
             
         if self.model_type == "groq":
             response = self.client.chat.completions.create(
@@ -54,5 +85,9 @@ class LLMWrapper:
         #     return self.pipeline(prompt, max_length=100)[0]["generated_text"]
 
         log_event(f"Generated response: {reply[:100]}...")
+        is_safe, warning_message = self.check_ethics(reply)
+        if not is_safe:
+            return "The generated response was flagged as inappropriate."
+
         return reply
 
