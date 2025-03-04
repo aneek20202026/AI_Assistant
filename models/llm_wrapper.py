@@ -30,6 +30,7 @@ class LLMWrapper:
             log_event(f"Retrieved relevant documents: {retrieved_docs}")
             context = "\n".join(retrieved_docs)
             prompt = f"{context}\n\n{prompt}" 
+            print("#########################################",prompt,"#####################################")
             
         if self.model_type == "groq":
             response = self.client.chat.completions.create(

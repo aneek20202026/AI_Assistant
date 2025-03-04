@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import pandas as pd
 from models.llm_wrapper import LLMWrapper
+from models.text_processing import preprocess_text
 from utils.logging import log_event
 from retrieval.vector_store import document_store, qa_store, summary_store, sentiment_store, ner_store
 
@@ -24,7 +25,9 @@ if task == "Summarization":
             summary_store.add_document("Summarize the given user input") 
         log_event("User requested summarization")
         response = llm.generate(text, summary_store)
-        summary_store.add_document(f"User: {text}\nResponse: {response}")
+        summary_store.add_document(
+            f"User: {preprocess_text(text)}\nResponse: {preprocess_text(response)}"
+        )
         st.write(response)
 
 elif task == "Sentiment Analysis":
@@ -37,7 +40,9 @@ elif task == "Sentiment Analysis":
             sentiment_store.add_document("Analyze the sentiment of the user from the provided input text") 
         log_event("User requested sentiment analysis")
         response = llm.generate(text, sentiment_store)
-        sentiment_store.add_document(f"User: {text}\nResponse: {response}")
+        sentiment_store.add_document(
+            f"User: {preprocess_text(text)}\nResponse: {preprocess_text(response)}"
+        )
         st.write(response)
 
 elif task == "NER":
@@ -50,7 +55,9 @@ elif task == "NER":
             ner_store.add_document("Extract named entities from the user input text") 
         log_event("User requested Named Entity Recognition (NER)")
         response = llm.generate(text,ner_store)
-        ner_store.add_document(f"User: {text}\nResponse: {response}")
+        ner_store.add_document(
+            f"User: {preprocess_text(text)}\nResponse: {preprocess_text(response)}"
+        )
         st.write(response)
 
 elif task == "Q&A":
@@ -65,7 +72,9 @@ elif task == "Q&A":
         log_event("User requested Question Answering")
         prompt = f"Context:\n{context}\n\nQuestion:\n{question}"
         response = llm.generate(prompt,qa_store)
-        qa_store.add_document(f"Context:\n{context}\n\nQuestion:\n{question}\nResponse:\n{response}")
+        qa_store.add_document(
+            f"Context:\n{preprocess_text(context)}\n\nQuestion:\n{preprocess_text(question)}\nResponse:\n{preprocess_text(response)}"
+        )
         st.write(response)
 
 elif task == "Upload & Store Document":
@@ -94,7 +103,9 @@ elif task == "Upload & Store Document":
             
             
             if document_store.is_empty():
-                document_store.add_document(f"Document:\n{text}")
+                document_store.add_document(
+                    preprocess_text(f"Document:\n{preprocess_text(text)}")
+                )
                 log_event(f"Indexed document content in vector store: {uploaded_file.name}")
 
             st.success(f"Stored {uploaded_file.name} successfully!")
@@ -106,7 +117,9 @@ elif task == "Upload & Store Document":
 
                 prompt = f"Question:\n{question}"
                 response = llm.generate(prompt, document_store)
-                document_store.add_document(f"Question:\n{question}\nResponse:\n{response}")
+                document_store.add_document(
+                    f"Question:\n{preprocess_text(question)}\nResponse:\n{preprocess_text(response)}"
+                )
                 st.write(response)
         except Exception as e:
             log_event(f"Error storing document: {str(e)}")
