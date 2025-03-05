@@ -4,7 +4,7 @@ from groq import Groq
 from dotenv import load_dotenv
 from utils.caching import cache_response
 from utils.logging import log_event
-# from transformers import pipeline
+from transformers import pipeline
 
 load_dotenv()
 
@@ -17,8 +17,8 @@ class LLMWrapper:
             self.model_name = "llama-3.3-70b-versatile"
         elif model_type == "openai":
             openai.api_key = os.getenv("OPENAI_API_KEY")
-        # elif model_type == "huggingface":
-        #     self.pipeline = pipeline("text-generation", model="gpt2")
+        elif model_type == "huggingface":
+            self.pipeline = pipeline("text-generation", model="gpt2")
 
     def check_ethics(self, text):
         log_event(f"Checking ethics for: {text[:100]}...")
@@ -81,8 +81,8 @@ class LLMWrapper:
                 messages=[{"role": "user", "content": prompt}]
             )
             reply = response["choices"][0]["message"]["content"]
-        # elif self.model_type == "huggingface":
-        #     return self.pipeline(prompt, max_length=100)[0]["generated_text"]
+        elif self.model_type == "huggingface":
+            return self.pipeline(prompt, max_length=100)[0]["generated_text"]
 
         log_event(f"Generated response: {reply[:100]}...")
         is_safe, warning_message = self.check_ethics(reply)
