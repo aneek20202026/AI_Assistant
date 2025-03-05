@@ -68,7 +68,7 @@ class LLMWrapper:
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=1,
-                max_completion_tokens=1024,
+                max_completion_tokens=5000,
                 top_p=1,
                 stream=False,
                 stop=None
