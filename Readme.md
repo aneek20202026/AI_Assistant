@@ -19,7 +19,7 @@ Ensure you have the following installed:
 1. Clone the repository:
    ```sh
    git clone https://github.com/aneek20202026/AI_Assistant.git
-   cd <repository-directory>
+   cd AI_Assistant
    ```
 2. Create a virtual environment (optional):
    ```sh
