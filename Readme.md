@@ -3,6 +3,10 @@
 ## Overview
 This project is a multi-functional AI assistant built using Python and Streamlit. It integrates the Groq API with the `llama-3.3-70b-versatile` model and utilizes FAISS-based vector databases for efficient data retrieval. The assistant supports multi-turn conversations, document-based Q&A, logging, caching, and adheres to ethical AI practices.
 
+
+## Hosted Application
+Access the live version of this app at: [AI Assistant](<https://aiassistant-demo.streamlit.app/>)
+
 ## Setup Instructions
 
 ### Prerequisites
@@ -14,7 +18,7 @@ Ensure you have the following installed:
 ### Installation
 1. Clone the repository:
    ```sh
-   git clone <repository-url>
+   git clone https://github.com/aneek20202026/AI_Assistant.git
    cd <repository-directory>
    ```
 2. Create a virtual environment (optional):
@@ -50,9 +54,6 @@ Update the `.env` file with necessary API keys and configuration parameters:
 ```
 GROQ_API_KEY=your_api_key
 ```
-
-## Hosted Application
-Access the live version of this app at: [AI Assistant](<https://aiassistant-demo.streamlit.app/>)
 
 ## Technical Report
 ### Design Choices & Technical Decisions
